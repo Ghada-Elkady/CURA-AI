@@ -9,16 +9,22 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.database import engine, Base
+from app.core.init_db import init_db_and_seed
 from app.api.v1 import auth, doctors, appointments, reviews, users, notifications
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan: startup and shutdown tasks."""
-    # Startup – tables are managed by Alembic; nothing to do here
+    # Startup: ensure tables exist and seed demo dataset if empty
+    try:
+        await init_db_and_seed()
+    except Exception as e:
+        print(f"Database init info: {e}")
     yield
     # Shutdown – dispose engine connection pool
     await engine.dispose()
+
 
 
 app = FastAPI(

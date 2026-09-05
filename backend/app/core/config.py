@@ -18,17 +18,18 @@ class Settings(BaseSettings):
         case_sensitive=False,
     )
 
-    # Database
-    DATABASE_URL: str = "postgresql+asyncpg://cura_user:cura_pass@localhost:5432/cura_db"
+    # Database: defaults to SQLite for immediate out-of-the-box local operation,
+    # or PostgreSQL when DATABASE_URL is set in environment.
+    DATABASE_URL: str = "sqlite+aiosqlite:///./cura.db"
 
     # JWT
-    SECRET_KEY: str = "change-me-in-production-very-long-secret"
+    SECRET_KEY: str = "cura-health-secret-key-production-change-me"
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1 day
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     # CORS
-    CORS_ORIGINS: List[str] = ["http://localhost:3000"]
+    CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://127.0.0.1:3000", "*"]
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
@@ -46,3 +47,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+

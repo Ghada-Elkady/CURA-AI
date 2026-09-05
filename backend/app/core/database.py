@@ -16,13 +16,15 @@ from app.core.config import settings
 # ---------------------------------------------------------------------------
 # Engine
 # ---------------------------------------------------------------------------
+engine_kwargs = {"echo": False}
+if "sqlite" not in settings.DATABASE_URL:
+    engine_kwargs.update({"pool_pre_ping": True, "pool_size": 10, "max_overflow": 20})
+
 engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=False,
-    pool_pre_ping=True,
-    pool_size=10,
-    max_overflow=20,
+    **engine_kwargs
 )
+
 
 # ---------------------------------------------------------------------------
 # Session factory
